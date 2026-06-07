@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
+# Upgrade pip and install setuptools first (fixes pkg_resources error)
+RUN pip install --upgrade pip setuptools wheel
+
 # Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -16,7 +19,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application source
 COPY . .
 
-# Create uploads directory
 RUN mkdir -p uploads
 
 EXPOSE 8000
