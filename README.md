@@ -13,7 +13,7 @@
 
 **No manual effort. No missed action items. No forgotten decisions.**
 
-[🚀 Live Demo](https://your-app.vercel.app) · [📖 Documentation](#-table-of-contents) · [🐛 Report Bug](https://github.com/yourusername/meeting-ai-summarizer/issues) · [✨ Request Feature](https://github.com/yourusername/meeting-ai-summarizer/issues)
+[🚀 Live Demo](https://meeting-ai-summarizer-4dq636281-frazyusafs-projects.vercel.app) · [📖 Documentation](#-table-of-contents) · [🐛 Report Bug](https://github.com/yourusername/meeting-ai-summarizer/issues) · [✨ Request Feature](https://github.com/yourusername/meeting-ai-summarizer/issues)
 
 <br/>
 
