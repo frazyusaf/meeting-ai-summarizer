@@ -1,28 +1,20 @@
-import whisper
+from faster_whisper import WhisperModel
 import ffmpeg
 import os
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Load model once at startup — avoids reloading on every request
 _model = None
 
-
-def get_model(size: str = "base"):
-    """Lazy-load the Whisper model (cached after first load)."""
+def get_model():
     global _model
     if _model is None:
-        logger.info(f"Loading Whisper model: {size}")
-        _model = whisper.load_model(size)
+        logger.info("Loading Faster-Whisper model...")
+        _model = WhisperModel("base", device="cpu", compute_type="int8")
     return _model
 
-
 def extract_audio(video_path: str) -> str:
-    """
-    Extract audio track from a video file using FFmpeg.
-    Returns path to the extracted .wav file.
-    """
     audio_path = os.path.splitext(video_path)[0] + "_extracted.wav"
     try:
         (
@@ -32,47 +24,27 @@ def extract_audio(video_path: str) -> str:
             .overwrite_output()
             .run(quiet=True)
         )
-        logger.info(f"Audio extracted to {audio_path}")
         return audio_path
     except ffmpeg.Error as e:
-        logger.error(f"FFmpeg error: {e.stderr.decode()}")
         raise RuntimeError(f"Failed to extract audio: {e.stderr.decode()}")
 
-
-def transcribe_audio(file_path: str, model_size: str = "base") -> dict:
-    """
-    Transcribe audio file to text using OpenAI Whisper.
-
-    Returns:
-        dict with keys: text, segments, language
-    """
-    model = get_model(model_size)
-
-    logger.info(f"Starting transcription for: {file_path}")
-    result = model.transcribe(file_path, verbose=False)
-
-    return {
-        "text": result["text"].strip(),
-        "segments": result.get("segments", []),
-        "language": result.get("language", "unknown"),
-    }
-
-
 def process_meeting_file(file_path: str) -> dict:
-    """
-    Full pipeline: handle both audio and video inputs.
-    Extracts audio if needed, then transcribes.
-    """
     ext = os.path.splitext(file_path)[1].lower()
     audio_path = file_path
 
     if ext == ".mp4":
         audio_path = extract_audio(file_path)
 
-    result = transcribe_audio(audio_path)
+    model = get_model()
+    segments, info = model.transcribe(audio_path, beam_size=5)
 
-    # Clean up extracted audio file if it was created
+    full_text = " ".join([segment.text for segment in segments])
+
     if audio_path != file_path and os.path.exists(audio_path):
         os.remove(audio_path)
 
-    return result
+    return {
+        "text": full_text.strip(),
+        "language": info.language,
+        "segments": [],
+    }
