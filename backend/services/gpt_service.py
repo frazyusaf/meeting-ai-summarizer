@@ -1,12 +1,16 @@
-import openai
-import json
 import os
+import json
 import logging
 from typing import Optional
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Groq uses OpenAI-compatible API — just swap the base_url and key
+client = OpenAI(
+    api_key=os.getenv("GROQ_API_KEY"),
+    base_url="https://api.groq.com/openai/v1",
+)
 
 SYSTEM_PROMPT = """You are a professional meeting note-taker and analyst.
 Your job is to analyze meeting transcripts and produce clean, structured summaries.
@@ -28,28 +32,18 @@ Return ONLY valid JSON. No extra text, no markdown."""
 
 
 def summarize_transcript(transcript: str, meeting_title: Optional[str] = "Untitled Meeting") -> dict:
-    """
-    Send transcript to GPT-4o-mini and return structured meeting notes.
-
-    Args:
-        transcript: Full meeting transcript text
-        meeting_title: Optional title for context
-
-    Returns:
-        dict with keys: summary, action_items, decisions, key_points
-    """
     if not transcript or len(transcript.strip()) < 50:
         raise ValueError("Transcript is too short to summarize.")
 
     prompt = USER_PROMPT_TEMPLATE.format(
         title=meeting_title,
-        transcript=transcript[:12000],  # Respect context limits
+        transcript=transcript[:12000],
     )
 
-    logger.info(f"Sending transcript to GPT ({len(transcript)} chars)")
+    logger.info(f"Sending transcript to Groq ({len(transcript)} chars)")
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="llama3-8b-8192",  # Free, fast Llama 3 model on Groq
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt},
@@ -60,7 +54,7 @@ def summarize_transcript(transcript: str, meeting_title: Optional[str] = "Untitl
 
     raw = response.choices[0].message.content.strip()
 
-    # Strip markdown fences if model adds them anyway
+    # Strip markdown fences if model adds them
     if raw.startswith("```"):
         raw = raw.split("```")[1]
         if raw.startswith("json"):
@@ -70,10 +64,9 @@ def summarize_transcript(transcript: str, meeting_title: Optional[str] = "Untitl
     try:
         result = json.loads(raw)
     except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse GPT response: {e}\nRaw: {raw[:500]}")
-        raise ValueError(f"GPT returned invalid JSON: {e}")
+        logger.error(f"Failed to parse response: {e}\nRaw: {raw[:500]}")
+        raise ValueError(f"Model returned invalid JSON: {e}")
 
-    # Ensure all expected keys exist
     result.setdefault("summary", "")
     result.setdefault("action_items", [])
     result.setdefault("decisions", [])
