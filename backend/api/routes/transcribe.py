@@ -23,7 +23,6 @@ def transcribe_meeting(body: TranscribeRequest, db: Session = Depends(get_db)):
     if not meeting.file_path:
         raise HTTPException(status_code=400, detail="No file associated with this meeting")
 
-    # Update status
     meeting.status = "transcribing"
     db.commit()
 
@@ -34,7 +33,6 @@ def transcribe_meeting(body: TranscribeRequest, db: Session = Depends(get_db)):
         db.commit()
         raise HTTPException(status_code=500, detail=f"Transcription failed: {str(e)}")
 
-    # Save transcript
     transcript = Transcript(
         meeting_id=meeting.id,
         full_text=result["text"],
@@ -50,7 +48,6 @@ def transcribe_meeting(body: TranscribeRequest, db: Session = Depends(get_db)):
         "transcript_id": str(transcript.id),
         "text": result["text"],
         "language": result.get("language"),
-        "segments": result.get("segments", []),
     }
 
 

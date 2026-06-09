@@ -146,7 +146,7 @@ export default function Home() {
                   <div className="w-14 h-14 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" />
                 </div>
                 <p className="font-medium text-blue-600">
-                  {progress < 45 ? "Uploading file..." : progress < 75 ? "Transcribing audio..." : "Generating notes..."}
+                 {progress < 30 ? "Uploading file..." : progress < 45 ? "Sending to Groq Whisper..." : progress < 75 ? "Transcribing audio with AI..." : "Generating structured notes..."}
                 </p>
                 <div className="w-full bg-gray-100 rounded-full h-2 max-w-xs mx-auto overflow-hidden">
                   <div
