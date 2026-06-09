@@ -381,7 +381,7 @@ Distributed under the MIT License. See `LICENSE` for details.
 **Muhammad Yusaf**
 
 - GitHub: [@frazyusaf](https://github.com/frazyusaf)
-- LinkedIn: [your-linkedin](https://www.linkedin.com/in/m-yusaf/)
+- LinkedIn: [Muhammad Yusaf](https://www.linkedin.com/in/m-yusaf/)
 
 ---
 
