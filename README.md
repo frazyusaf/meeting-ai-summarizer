@@ -2,8 +2,9 @@
 
 <img src="https://img.shields.io/badge/version-1.0.0-0ea5e9?style=flat-square" />
 <img src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square" />
-<img src="https://img.shields.io/badge/status-active-22c55e?style=flat-square" />
+<img src="https://img.shields.io/badge/status-live-22c55e?style=flat-square" />
 <img src="https://img.shields.io/badge/PRs-welcome-f59e0b?style=flat-square" />
+<img src="https://img.shields.io/badge/cost-$0.00-22c55e?style=flat-square" />
 
 <br/><br/>
 
@@ -13,11 +14,11 @@
 
 **No manual effort. No missed action items. No forgotten decisions.**
 
-[🚀 Live Demo](https://meeting-ai-summarizer-4dq636281-frazyusafs-projects.vercel.app) · [📖 Documentation](#-table-of-contents) · [🐛 Report Bug](https://github.com/yourusername/meeting-ai-summarizer/issues) · [✨ Request Feature](https://github.com/yourusername/meeting-ai-summarizer/issues)
+[🚀 Live Demo](https://meeting-ai-summarizer.vercel.app) · [⚙️ API Docs](https://meeting-ai-summarizer.onrender.com/docs) · [🐛 Report Bug](https://github.com/frazyusaf/meeting-ai-summarizer/issues) · [✨ Request Feature](https://github.com/frazyusaf/meeting-ai-summarizer/issues)
 
 <br/>
 
-![Demo Screenshot](screenshots/dashboard-preview.png)
+![Tech Stack](https://skillicons.dev/icons?i=python,fastapi,nextjs,ts,tailwind,postgres,docker)
 
 </div>
 
@@ -55,7 +56,7 @@ Meetings generate enormous value — but that value is lost if no one properly d
 - ✅ Important **discussion points**
 - ✅ Downloadable **PDF, DOCX, or TXT** export
 
-Built as a full-stack, SaaS-ready application using modern technologies — this project demonstrates end-to-end product thinking, AI integration, and professional deployment.
+Built as a full-stack, production-deployed application using modern technologies — this project demonstrates end-to-end product thinking, AI integration, and real-world deployment on free-tier infrastructure.
 
 ---
 
@@ -63,15 +64,15 @@ Built as a full-stack, SaaS-ready application using modern technologies — this
 
 | Feature | Description |
 |---|---|
-| 🎵 **Multi-format Upload** | Supports `.mp3`, `.wav`, and `.mp4` files |
-| 🗣️ **AI Transcription** | Powered by OpenAI Whisper — industry-leading accuracy |
-| 📝 **Smart Summarization** | GPT-4o-mini extracts summaries, action items, and decisions |
+| 🎵 **Multi-format Upload** | Supports `.mp3`, `.wav`, and `.mp4` files up to 100MB |
+| 🗣️ **AI Transcription** | Powered by Groq Whisper Large v3 — fast, accurate, multi-language |
+| 📝 **Smart Summarization** | Llama 3.3 70B extracts summaries, action items, and decisions |
 | 📤 **Export Options** | Download notes as PDF, DOCX, or plain TXT |
-| 🔍 **Meeting History** | Search and filter all past meeting notes |
-| 🔐 **Authentication** | Secure JWT-based login or Clerk integration |
+| 🔍 **Meeting History** | Browse and revisit all past meeting notes |
+| 🔐 **Authentication** | Secure JWT-based login and registration |
 | 🐳 **Docker Support** | Full stack runs with a single `docker compose up` |
 | 📱 **Responsive Design** | Works seamlessly on desktop and mobile |
-| 🌙 **Dark Mode** | Tailwind-powered dark/light theme toggle |
+| 💸 **100% Free to Run** | Entirely on free-tier services — $0/month infrastructure cost |
 
 ---
 
@@ -80,36 +81,39 @@ Built as a full-stack, SaaS-ready application using modern technologies — this
 | Layer | Technology | Why |
 |---|---|---|
 | **Backend** | FastAPI (Python) | Async, modern, auto-generates API docs |
-| **Frontend** | Next.js + TypeScript | SEO-friendly, Vercel-deployable, production-ready |
-| **UI Components** | shadcn/ui + Tailwind CSS | Professional polish with zero custom CSS overhead |
-| **Speech-to-Text** | OpenAI Whisper | Best-in-class accuracy, multi-language, open-source |
-| **Summarization** | GPT-4o-mini | Structured output, cost-effective, reliable |
-| **Database** | PostgreSQL | Production-grade relational DB via Supabase free tier |
-| **Auth** | JWT / Clerk | Secure, SaaS-ready authentication |
-| **File Processing** | FFmpeg | Industry standard for audio/video extraction |
+| **Frontend** | Next.js 15 + TypeScript | SEO-friendly, Vercel-deployable, production-ready |
+| **UI** | shadcn/ui + Tailwind CSS | Professional polish with minimal custom CSS |
+| **Transcription** | Groq Whisper Large v3 | Best-in-class accuracy, runs on Groq servers (no RAM cost) |
+| **Summarization** | Groq Llama 3.3 70B | Fast, free, structured JSON output |
+| **Database** | PostgreSQL | Production-grade relational DB |
+| **Auth** | JWT + bcrypt | Secure, stateless authentication |
+| **Exports** | ReportLab + python-docx | PDF and DOCX generation |
 | **Containerization** | Docker + Compose | One-command local setup |
-| **Backend Hosting** | Render.com | Free tier, Python support, easy deploy |
-| **Frontend Hosting** | Vercel | Auto-deploy from GitHub, global CDN |
-| **DB Hosting** | Supabase | Free PostgreSQL with built-in auth and storage |
+| **Backend Hosting** | Render.com (free tier) | Auto-deploy from GitHub |
+| **Frontend Hosting** | Vercel (free tier) | Global CDN, instant deploys |
+| **DB Hosting** | Render PostgreSQL (free tier) | Managed, zero-config |
 
 ---
 
 ## 🏗️ System Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│              Frontend (Next.js on Vercel)            │
-└───────────────────────┬─────────────────────────────┘
-                        │ HTTP / REST
-┌───────────────────────▼─────────────────────────────┐
-│            Backend API (FastAPI on Render)           │
-└──────────┬────────────┬────────────────┬────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│           Frontend — Next.js 15 (Vercel)                    │
+│      https://meeting-ai-summarizer.vercel.app               │
+└───────────────────────┬─────────────────────────────────────┘
+                        │ HTTPS / REST
+┌───────────────────────▼─────────────────────────────────────┐
+│           Backend API — FastAPI (Render.com)                 │
+│      https://meeting-ai-summarizer.onrender.com             │
+└──────────┬────────────┬────────────────┬────────────────────┘
            │            │                │
-    ┌──────▼──────┐  ┌──▼──────┐  ┌─────▼──────────┐
-    │  OpenAI     │  │  GPT    │  │  PostgreSQL     │
-    │  Whisper    │  │  API    │  │  (Supabase)     │
-    │  (STT)      │  │  (NLP)  │  │  (Persistence)  │
-    └─────────────┘  └─────────┘  └────────────────┘
+    ┌──────▼──────┐  ┌──▼────────────┐  ┌─────▼──────────┐
+    │    Groq     │  │     Groq      │  │  PostgreSQL    │
+    │  Whisper    │  │  Llama 3.3    │  │  (Render DB)   │
+    │  Large v3   │  │    70B        │  │                │
+    │ (Speech→Text)│  │ (Summarize)  │  │ (Persistence)  │
+    └─────────────┘  └───────────────┘  └────────────────┘
 ```
 
 **Processing Pipeline:**
@@ -117,11 +121,11 @@ Built as a full-stack, SaaS-ready application using modern technologies — this
 ```
 User uploads file (MP3 / WAV / MP4)
         ↓
-FFmpeg extracts audio track
+File saved to server
         ↓
-Whisper converts speech → transcript
+Groq Whisper Large v3 → full transcript
         ↓
-GPT processes transcript → structured JSON
+Groq Llama 3.3 70B → structured JSON notes
         ↓
 Results stored in PostgreSQL
         ↓
@@ -135,24 +139,25 @@ Frontend renders dashboard + export options
 ### Prerequisites
 
 - [Docker & Docker Compose](https://docs.docker.com/get-docker/) *(recommended)*
-- Or: Python 3.11+, Node.js 18+, PostgreSQL 15, FFmpeg
+- Or: Python 3.11+, Node.js 18+, PostgreSQL 15
+- A free [Groq API key](https://console.groq.com) *(no credit card needed)*
 
 ### Installation with Docker *(Recommended)*
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/yourusername/meeting-ai-summarizer.git
+git clone https://github.com/frazyusaf/meeting-ai-summarizer.git
 cd meeting-ai-summarizer
 
 # 2. Set up environment variables
 cp .env.example .env
-# Open .env and add your OPENAI_API_KEY
+# Open .env and add your GROQ_API_KEY
 
 # 3. Start the full stack
 docker compose up
 ```
 
-That's it. The app will be available at:
+The app will be available at:
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:8000
 - **API Docs:** http://localhost:8000/docs
@@ -166,16 +171,14 @@ That's it. The app will be available at:
 ```bash
 cd backend
 
-# Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 
-# Install dependencies
-pip install fastapi uvicorn python-multipart openai whisper ffmpeg-python \
-            sqlalchemy psycopg2-binary python-dotenv python-jose bcrypt \
-            reportlab python-docx
+pip install -r requirements.txt
 
-# Start the backend server
+cp .env.example .env
+# Fill in your GROQ_API_KEY and DATABASE_URL
+
 uvicorn main:app --reload --port 8000
 ```
 
@@ -184,10 +187,10 @@ uvicorn main:app --reload --port 8000
 ```bash
 cd frontend
 
-# Install dependencies
 npm install
 
-# Start the development server
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
+
 npm run dev
 ```
 
@@ -195,58 +198,59 @@ npm run dev
 
 ## 🔑 Environment Variables
 
-Copy `.env.example` to `.env` and fill in your values:
+### Backend (`backend/.env`)
 
 ```env
 # Required
-OPENAI_API_KEY=sk-your-openai-key-here
+GROQ_API_KEY=gsk_your_groq_key_here
 DATABASE_URL=postgresql://postgres:password@localhost:5432/meeting_ai
-JWT_SECRET_KEY=your-super-secret-key-minimum-32-characters
+JWT_SECRET_KEY=your-random-32-character-secret-key
 FRONTEND_URL=http://localhost:3000
-
-# Optional — Clerk Authentication (alternative to JWT)
-CLERK_SECRET_KEY=
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-
-# Optional — Email Notifications (SendGrid)
-SENDGRID_API_KEY=
-FROM_EMAIL=noreply@yourdomain.com
 ```
 
-> ⚠️ **Never commit your `.env` file to GitHub.** It is already listed in `.gitignore`.
+### Frontend (`frontend/.env.local`)
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+> ⚠️ Never commit `.env` files to GitHub. They are already in `.gitignore`.
+
+> 💡 Get your free Groq API key at https://console.groq.com — no credit card required.
 
 ---
 
 ## 📡 API Reference
 
-| Method | Endpoint | Description | Response |
-|---|---|---|---|
-| `POST` | `/api/upload` | Upload a meeting file | `{ file_id, filename, status }` |
-| `POST` | `/api/transcribe` | Start transcription | `{ meeting_id, transcript }` |
-| `POST` | `/api/summarize` | Generate AI notes | `{ summary, action_items, decisions }` |
-| `GET` | `/api/export/{id}` | Export notes as file | File download (PDF / DOCX / TXT) |
-| `GET` | `/api/meetings` | List all meetings | `[{ id, title, created_at }]` |
-| `POST` | `/api/auth/register` | Register a new user | `{ access_token, user }` |
-| `POST` | `/api/auth/login` | Log in | `{ access_token, user }` |
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/upload` | Upload a meeting audio/video file |
+| `POST` | `/api/transcribe` | Transcribe via Groq Whisper Large v3 |
+| `POST` | `/api/summarize` | Summarize via Groq Llama 3.3 70B |
+| `GET` | `/api/export/{id}?format=pdf` | Export notes (pdf / docx / txt) |
+| `GET` | `/api/meetings` | List all meetings |
+| `GET` | `/api/meetings/{id}` | Get single meeting with transcript + summary |
+| `POST` | `/api/auth/register` | Register a new user |
+| `POST` | `/api/auth/login` | Login and receive JWT token |
 
-Full interactive docs available at `/docs` when running the backend.
+Full interactive docs: **https://meeting-ai-summarizer.onrender.com/docs**
 
 **Sample AI Output:**
 
 ```json
 {
-  "summary": "The team discussed Q3 sales targets and approved a marketing budget increase...",
+  "summary": "The team reviewed Q3 targets and approved a budget increase for the marketing campaign launching in October.",
   "action_items": [
     { "task": "Prepare Q3 sales report", "assignee": "Ali", "deadline": "Friday" },
     { "task": "Contact vendor for pricing", "assignee": "Sara", "deadline": "Next Monday" }
   ],
   "decisions": [
     "Launch new campaign in October",
-    "Hire 2 additional sales staff"
+    "Approve 20% marketing budget increase"
   ],
   "key_points": [
     "Revenue down 12% compared to Q2",
-    "Marketing budget approved for increase"
+    "Two new sales hires approved"
   ]
 }
 ```
@@ -256,7 +260,6 @@ Full interactive docs available at `/docs` when running the backend.
 ## 🗄️ Database Schema
 
 ```sql
--- Users
 CREATE TABLE users (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email         VARCHAR(255) UNIQUE NOT NULL,
@@ -265,18 +268,16 @@ CREATE TABLE users (
     created_at    TIMESTAMP DEFAULT NOW()
 );
 
--- Meetings
 CREATE TABLE meetings (
     id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id          UUID REFERENCES users(id) ON DELETE CASCADE,
     title            VARCHAR(255),
     file_path        TEXT,
-    status           VARCHAR(50) DEFAULT 'uploaded', -- uploaded | transcribing | summarizing | done
+    status           VARCHAR(50) DEFAULT 'uploaded',
     duration_seconds INTEGER,
     created_at       TIMESTAMP DEFAULT NOW()
 );
 
--- Transcripts
 CREATE TABLE transcripts (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     meeting_id UUID REFERENCES meetings(id) ON DELETE CASCADE,
@@ -285,7 +286,6 @@ CREATE TABLE transcripts (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Summaries
 CREATE TABLE summaries (
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     meeting_id   UUID REFERENCES meetings(id) ON DELETE CASCADE,
@@ -305,105 +305,74 @@ CREATE TABLE summaries (
 meeting-ai-summarizer/
 │
 ├── backend/
-│   ├── api/
-│   │   └── routes/
-│   │       ├── upload.py         # File upload endpoint
-│   │       ├── transcribe.py     # Whisper transcription
-│   │       ├── summarize.py      # GPT summarization
-│   │       ├── export.py         # PDF/DOCX/TXT export
-│   │       └── auth.py           # Login & registration
-│   ├── models/
-│   │   ├── meeting.py
-│   │   └── user.py
+│   ├── api/routes/
+│   │   ├── auth.py           # JWT login & registration
+│   │   ├── upload.py         # File upload endpoint
+│   │   ├── transcribe.py     # Groq Whisper transcription
+│   │   ├── summarize.py      # Groq Llama summarization
+│   │   └── export.py         # PDF / DOCX / TXT export
+│   ├── models/               # SQLAlchemy ORM + Pydantic schemas
 │   ├── services/
-│   │   ├── whisper_service.py    # Speech-to-text logic
-│   │   ├── gpt_service.py        # Summarization logic
-│   │   └── export_service.py     # File generation
-│   ├── database/
-│   │   ├── connection.py
-│   │   └── schemas.py
-│   ├── main.py
+│   │   ├── whisper_service.py   # Groq Whisper integration
+│   │   ├── gpt_service.py       # Groq Llama integration
+│   │   └── export_service.py    # File generation logic
+│   ├── database/             # DB connection + SQL schema
+│   ├── main.py               # FastAPI app entry point
 │   ├── requirements.txt
-│   └── .env.example
+│   └── Dockerfile
 │
 ├── frontend/
-│   ├── components/
-│   │   ├── UploadZone.tsx
-│   │   ├── TranscriptPanel.tsx
-│   │   ├── SummaryCard.tsx
-│   │   ├── ActionItems.tsx
-│   │   ├── AnalyticsChart.tsx
-│   │   └── ExportButton.tsx
 │   ├── pages/
-│   │   ├── index.tsx             # Landing page
+│   │   ├── index.tsx             # Upload page
 │   │   ├── dashboard/[id].tsx    # Results dashboard
 │   │   └── history.tsx           # Meeting history
-│   └── package.json
+│   ├── styles/globals.css
+│   └── Dockerfile
 │
-├── docs/
-├── screenshots/
 ├── docker-compose.yml
+├── render.yaml
 ├── .gitignore
-├── README.md
-└── LICENSE
+└── README.md
 ```
 
 ---
 
 ## 🗓️ Roadmap
 
-### ✅ MVP (v1.0)
-- [x] Audio/video file upload (MP3, WAV, MP4)
-- [x] Speech-to-text via OpenAI Whisper
-- [x] AI summarization via GPT-4o-mini
+### ✅ Completed (v1.0)
+- [x] Audio/video upload (MP3, WAV, MP4)
+- [x] AI transcription via Groq Whisper Large v3
+- [x] AI summarization via Groq Llama 3.3 70B
 - [x] Export as PDF, DOCX, TXT
 - [x] Meeting history dashboard
 - [x] JWT authentication
 - [x] Docker support
-- [x] Deployment to Render + Vercel
+- [x] Deployed on Render + Vercel — 100% free
 
 ### 🔄 Phase 2 (Upcoming)
-- [ ] **Speaker diarization** — identify who said what using `pyannote.audio`
-- [ ] **Analytics dashboard** — speaking time, participation %, keyword frequency
-- [ ] **Smart search** — full-text search across all past meeting notes (PostgreSQL GIN index)
-- [ ] **Email summaries** — auto-send notes to participants via SendGrid / Resend
-- [ ] **Zoom / Google Meet integration** — direct import from meeting platforms
-- [ ] **Multi-language UI** — Urdu and other languages
-- [ ] **Sentiment analysis** — detect tone and meeting energy
+- [ ] Speaker diarization — identify who said what
+- [ ] Analytics dashboard — speaking time, participation %
+- [ ] Full-text search across all past meetings
+- [ ] Email summaries to participants
+- [ ] Zoom / Google Meet direct integration
+- [ ] Multi-language UI support
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome and appreciated.
-
 ```bash
-# 1. Fork the repo
-# 2. Create your feature branch
-git checkout -b feat/speaker-diarization
-
-# 3. Commit with a meaningful message
-git commit -m 'feat: add pyannote speaker diarization'
-
-# 4. Push and open a Pull Request
-git push origin feat/speaker-diarization
+git checkout -b feat/your-feature
+git commit -m 'feat: add your feature'
+git push origin feat/your-feature
+# Open a Pull Request
 ```
-
-**Commit message convention:**
-
-| Prefix | Usage |
-|---|---|
-| `feat:` | New feature |
-| `fix:` | Bug fix |
-| `docs:` | Documentation |
-| `style:` | UI/formatting changes |
-| `refactor:` | Code cleanup |
 
 ---
 
 ## 📄 License
 
-Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
+Distributed under the MIT License. See `LICENSE` for details.
 
 ---
 
@@ -411,7 +380,7 @@ Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
 
 **Muhammad Yusaf**
 
-- GitHub: [@yourusername](https://github.com/yourusername)
+- GitHub: [@frazyusaf](https://github.com/frazyusaf)
 - LinkedIn: [your-linkedin](https://linkedin.com/in/your-profile)
 
 ---
@@ -420,6 +389,8 @@ Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
 
 ⭐ **If this project helped you, please give it a star!** ⭐
 
-*Built with FastAPI · Next.js · OpenAI Whisper · GPT-4o-mini · PostgreSQL · Docker*
+*Built with FastAPI · Next.js 15 · Groq Whisper · Llama 3.3 · PostgreSQL · Docker*
+
+*Deployed on Render + Vercel — $0.00/month*
 
 </div>
