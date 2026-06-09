@@ -109,7 +109,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-6 text-blue-700 bg-blue-50 border border-blue-100">
             <Zap className="w-3.5 h-3.5" />
-            Powered by OpenAI Whisper + GPT-4o-mini
+             Powered by Groq Whisper Large v3 + Llama 3.3 70B
           </div>
           <h1 className="text-5xl font-bold mb-5 leading-tight" style={{ color: "var(--text)" }}>
             Meeting notes,<br />
