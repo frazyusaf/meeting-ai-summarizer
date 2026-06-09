@@ -43,7 +43,7 @@ def summarize_transcript(transcript: str, meeting_title: Optional[str] = "Untitl
     logger.info(f"Sending transcript to Groq ({len(transcript)} chars)")
 
     response = client.chat.completions.create(
-        model="llama3-8b-8192",  # Free, fast Llama 3 model on Groq
+        model="llama-3.3-70b-versatile",  # Free, fast Llama 3 model on Groq
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt},
