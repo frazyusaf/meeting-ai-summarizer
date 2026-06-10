@@ -28,6 +28,7 @@
 ![Render](https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=black)
 <br/>
 
+![Thumbnail](thumbnail.svg)
 ![Upload Page](screenshots/upload.png)
 ![Dashboard](screenshots/dashboard.png)
 </div>
