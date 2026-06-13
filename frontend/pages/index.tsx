@@ -23,66 +23,36 @@ export default function Home() {
   const [error, setError] = useState("");
 
   const getSessionId = (): string => {
-  let sessionId = localStorage.getItem("meeting_session_id");
-  if (!sessionId) {
-    sessionId = crypto.randomUUID();
-    localStorage.setItem("meeting_session_id", sessionId);
-  }
-  return sessionId;
+    let sessionId = localStorage.getItem("meeting_session_id");
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      localStorage.setItem("meeting_session_id", sessionId);
+    }
+    return sessionId;
   };
 
   const handleFile = async (file: File) => {
-  const ext = file.name.split(".").pop()?.toLowerCase();
-  if (!["mp3", "wav", "mp4"].includes(ext || "")) {
-    setError("Only .mp3, .wav, and .mp4 files are supported.");
-    return;
-  }
-
-  setError("");
-  setUploading(true);
-  setProgress(10);
-
-  const sessionId = getSessionId();
-  const headers = { "x-session-id": sessionId };
-
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const uploadRes = await axios.post(`${API}/api/upload`, formData, {
-      headers: { ...headers, "Content-Type": "multipart/form-data" },
-      onUploadProgress: (e) => {
-        if (e.total) setProgress(Math.round((e.loaded / e.total) * 40));
-      },
-    });
-
-    const { meeting_id } = uploadRes.data;
-    setProgress(45);
-
-    await axios.post(`${API}/api/transcribe`, { meeting_id }, { headers });
-    setProgress(75);
-
-    await axios.post(`${API}/api/summarize`, { meeting_id }, { headers });
-    setProgress(100);
-
-    router.push(`/dashboard/${meeting_id}`);
-  } catch (err: any) {
-    setError(err.response?.data?.detail || "Something went wrong. Please try again.");
-    setUploading(false);
-    setProgress(0);
-  }
-};
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    if (!["mp3", "wav", "mp4"].includes(ext || "")) {
+      setError("Only .mp3, .wav, and .mp4 files are supported.");
+      return;
+    }
 
     setError("");
     setUploading(true);
     setProgress(10);
+
+    const sessionId = getSessionId();
 
     try {
       const formData = new FormData();
       formData.append("file", file);
 
       const uploadRes = await axios.post(`${API}/api/upload`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "x-session-id": sessionId,
+        },
         onUploadProgress: (e) => {
           if (e.total) setProgress(Math.round((e.loaded / e.total) * 40));
         },
@@ -91,10 +61,18 @@ export default function Home() {
       const { meeting_id } = uploadRes.data;
       setProgress(45);
 
-      await axios.post(`${API}/api/transcribe`, { meeting_id });
+      await axios.post(
+        `${API}/api/transcribe`,
+        { meeting_id },
+        { headers: { "x-session-id": sessionId } }
+      );
       setProgress(75);
 
-      await axios.post(`${API}/api/summarize`, { meeting_id });
+      await axios.post(
+        `${API}/api/summarize`,
+        { meeting_id },
+        { headers: { "x-session-id": sessionId } }
+      );
       setProgress(100);
 
       router.push(`/dashboard/${meeting_id}`);
@@ -118,8 +96,8 @@ export default function Home() {
   };
 
   const features = [
-    { icon: Mic, title: "AI Transcription", desc: "Powered by OpenAI Whisper — industry-leading accuracy across accents and languages." },
-    { icon: Sparkles, title: "Smart Summarization", desc: "GPT-4o-mini extracts the summary, action items, decisions, and key points automatically." },
+    { icon: Mic, title: "AI Transcription", desc: "Powered by Groq Whisper Large v3 — industry-leading accuracy across accents and languages." },
+    { icon: Sparkles, title: "Smart Summarization", desc: "Llama 3.3 70B extracts the summary, action items, decisions, and key points automatically." },
     { icon: CheckSquare, title: "Action Items", desc: "Every task is extracted with its assignee and deadline — nothing falls through the cracks." },
     { icon: Download, title: "Export Anywhere", desc: "Download your notes as PDF, DOCX, or plain text in one click." },
   ];
@@ -153,7 +131,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-6 text-blue-700 bg-blue-50 border border-blue-100">
             <Zap className="w-3.5 h-3.5" />
-             Powered by Groq Whisper Large v3 + Llama 3.3 70B
+            Powered by Groq Whisper Large v3 + Llama 3.3 70B
           </div>
           <h1 className="text-5xl font-bold mb-5 leading-tight" style={{ color: "var(--text)" }}>
             Meeting notes,<br />
@@ -190,7 +168,7 @@ export default function Home() {
                   <div className="w-14 h-14 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" />
                 </div>
                 <p className="font-medium text-blue-600">
-                 {progress < 30 ? "Uploading file..." : progress < 45 ? "Sending to Groq Whisper..." : progress < 75 ? "Transcribing audio with AI..." : "Generating structured notes..."}
+                  {progress < 30 ? "Uploading file..." : progress < 45 ? "Sending to Groq Whisper..." : progress < 75 ? "Transcribing audio with AI..." : "Generating structured notes..."}
                 </p>
                 <div className="w-full bg-gray-100 rounded-full h-2 max-w-xs mx-auto overflow-hidden">
                   <div
