@@ -1,8 +1,9 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Header
 from sqlalchemy.orm import Session
 import shutil
 import os
 import uuid
+from typing import Optional
 
 from database.connection import get_db
 from models.meeting import Meeting
@@ -18,6 +19,7 @@ MAX_FILE_SIZE_MB = 100
 async def upload_meeting(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    x_session_id: Optional[str] = Header(None),
 ):
     ext = os.path.splitext(file.filename)[1].lower()
     if ext not in ALLOWED_EXTENSIONS:
@@ -31,7 +33,6 @@ async def upload_meeting(
 
     os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-    # Stream file to disk
     with open(save_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
 
@@ -40,9 +41,17 @@ async def upload_meeting(
         os.remove(save_path)
         raise HTTPException(status_code=413, detail=f"File too large. Max size: {MAX_FILE_SIZE_MB}MB")
 
-    # Create a meeting record
     title = os.path.splitext(file.filename)[0].replace("_", " ").replace("-", " ").title()
-    meeting = Meeting(title=title, file_path=save_path, status="uploaded")
+
+    # Link meeting to session ID if provided
+    session_id = x_session_id or str(uuid.uuid4())
+
+    meeting = Meeting(
+        title=title,
+        file_path=save_path,
+        status="uploaded",
+        session_id=session_id,
+    )
     db.add(meeting)
     db.commit()
     db.refresh(meeting)
@@ -53,4 +62,5 @@ async def upload_meeting(
         "filename": file.filename,
         "file_size_mb": round(file_size_mb, 2),
         "status": "uploaded",
+        "session_id": session_id,
     }

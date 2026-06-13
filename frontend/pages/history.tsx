@@ -27,9 +27,12 @@ export default function History() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${API}/api/meetings`)
-      .then(res => { setMeetings(res.data); setLoading(false); })
-      .catch(() => setLoading(false));
+  const sessionId = localStorage.getItem("meeting_session_id") || "";
+  axios.get(`${API}/api/meetings`, {
+    headers: { "x-session-id": sessionId }
+  })
+    .then(res => { setMeetings(res.data); setLoading(false); })
+    .catch(() => setLoading(false));
   }, []);
 
   return (

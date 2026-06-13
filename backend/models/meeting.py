@@ -23,7 +23,8 @@ class Meeting(Base):
     __tablename__ = "meetings"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
+    session_id = Column(String(255), nullable=True, index=True)  # ← NEW
     title = Column(String(255))
     file_path = Column(Text)
     status = Column(String(50), default="uploaded")

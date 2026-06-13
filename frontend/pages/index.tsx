@@ -22,12 +22,56 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
 
+  const getSessionId = (): string => {
+  let sessionId = localStorage.getItem("meeting_session_id");
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem("meeting_session_id", sessionId);
+  }
+  return sessionId;
+  };
+
   const handleFile = async (file: File) => {
-    const ext = file.name.split(".").pop()?.toLowerCase();
-    if (!["mp3", "wav", "mp4"].includes(ext || "")) {
-      setError("Only .mp3, .wav, and .mp4 files are supported.");
-      return;
-    }
+  const ext = file.name.split(".").pop()?.toLowerCase();
+  if (!["mp3", "wav", "mp4"].includes(ext || "")) {
+    setError("Only .mp3, .wav, and .mp4 files are supported.");
+    return;
+  }
+
+  setError("");
+  setUploading(true);
+  setProgress(10);
+
+  const sessionId = getSessionId();
+  const headers = { "x-session-id": sessionId };
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const uploadRes = await axios.post(`${API}/api/upload`, formData, {
+      headers: { ...headers, "Content-Type": "multipart/form-data" },
+      onUploadProgress: (e) => {
+        if (e.total) setProgress(Math.round((e.loaded / e.total) * 40));
+      },
+    });
+
+    const { meeting_id } = uploadRes.data;
+    setProgress(45);
+
+    await axios.post(`${API}/api/transcribe`, { meeting_id }, { headers });
+    setProgress(75);
+
+    await axios.post(`${API}/api/summarize`, { meeting_id }, { headers });
+    setProgress(100);
+
+    router.push(`/dashboard/${meeting_id}`);
+  } catch (err: any) {
+    setError(err.response?.data?.detail || "Something went wrong. Please try again.");
+    setUploading(false);
+    setProgress(0);
+  }
+};
 
     setError("");
     setUploading(true);

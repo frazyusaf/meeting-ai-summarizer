@@ -39,26 +39,33 @@ export default function Dashboard() {
   const [exporting, setExporting] = useState("");
 
   useEffect(() => {
-    if (!id) return;
-    axios.get(`${API}/api/meetings/${id}`)
-      .then(res => { setMeeting(res.data); setLoading(false); })
-      .catch(() => { setError("Could not load meeting."); setLoading(false); });
+  if (!id) return;
+  const sessionId = localStorage.getItem("meeting_session_id") || "";
+  axios.get(`${API}/api/meetings/${id}`, {
+    headers: { "x-session-id": sessionId }
+  })
+    .then(res => { setMeeting(res.data); setLoading(false); })
+    .catch(() => { setError("Could not load meeting."); setLoading(false); });
   }, [id]);
 
   const handleExport = async (format: string) => {
-    setExporting(format);
-    try {
-      const res = await axios.get(`${API}/api/export/${id}?format=${format}`, { responseType: "blob" });
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${meeting?.title || "meeting"}.${format}`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch {
-      alert("Export failed. Please try again.");
-    }
-    setExporting("");
+  setExporting(format);
+  const sessionId = localStorage.getItem("meeting_session_id") || "";
+  try {
+    const res = await axios.get(`${API}/api/export/${id}?format=${format}`, {
+      responseType: "blob",
+      headers: { "x-session-id": sessionId }
+    });
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${meeting?.title || "meeting"}.${format}`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  } catch {
+    alert("Export failed. Please try again.");
+  }
+  setExporting("");
   };
 
   if (loading) return (

@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Header
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
+from typing import Optional
 import uuid
 
 from database.connection import get_db
@@ -15,10 +16,17 @@ class SummarizeRequest(BaseModel):
 
 
 @router.post("/summarize")
-def summarize_meeting(body: SummarizeRequest, db: Session = Depends(get_db)):
+def summarize_meeting(
+    body: SummarizeRequest,
+    db: Session = Depends(get_db),
+    x_session_id: Optional[str] = Header(None),
+):
     meeting = db.query(Meeting).filter(Meeting.id == uuid.UUID(body.meeting_id)).first()
     if not meeting:
         raise HTTPException(status_code=404, detail="Meeting not found")
+
+    if meeting.session_id and x_session_id != meeting.session_id:
+        raise HTTPException(status_code=403, detail="Access denied")
 
     if not meeting.transcript:
         raise HTTPException(status_code=400, detail="Meeting has not been transcribed yet")
@@ -36,7 +44,6 @@ def summarize_meeting(body: SummarizeRequest, db: Session = Depends(get_db)):
         db.commit()
         raise HTTPException(status_code=500, detail=f"Summarization failed: {str(e)}")
 
-    # Upsert summary
     if meeting.summary:
         meeting.summary.summary = result["summary"]
         meeting.summary.action_items = result["action_items"]
