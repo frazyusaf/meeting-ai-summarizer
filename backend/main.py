@@ -1,16 +1,32 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from sqlalchemy import text
 import os
 
 from api.routes import upload, transcribe, summarize, export, auth
-from database.connection import engine, Base
+from database.connection import engine, Base, SessionLocal
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Create tables on startup
-    Base.metadata.create_all(bind=engine)
+    # Create tables
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"DB init warning: {e}")
+
+    # Run migrations
+    try:
+        db = SessionLocal()
+        db.execute(text("ALTER TABLE meetings ADD COLUMN IF NOT EXISTS session_id VARCHAR(255)"))
+        db.execute(text("CREATE INDEX IF NOT EXISTS meetings_session_id_idx ON meetings(session_id)"))
+        db.commit()
+        db.close()
+        print("Migration completed successfully")
+    except Exception as e:
+        print(f"Migration warning: {e}")
+
     os.makedirs("uploads", exist_ok=True)
     yield
 
